@@ -1,11 +1,9 @@
 #ifndef GAME_ENGINE_HPP
 #define GAME_ENGINE_HPP
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <variant>
 #include <vector>
 
 #include <fmt/format.h>
