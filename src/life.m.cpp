@@ -16,31 +16,36 @@ constexpr auto getAppArgs() -> std::vector<utils::OptionInfo>
     return {
         {.name = "-h", .description = "Prints application description"},
         {.name = "-r",
-         .description = "Settle rules set for the game. BASIC - basic rulse"},
+         .description = "Settle rules set for the game. BASIC - basic rulse",
+         .isMandatory = false,
+         .hasArgValue = true},
         {.name = "-b",
          .description = "Settle rules for borders. LIMITED - hard borders, "
-                        "cells that leaves filed are diying."},
-        {.name = "-f", .description = "Path to file with initial filed state"},
+                        "cells that leaves filed are diying.",
+         .isMandatory = false,
+         .hasArgValue = true},
+        {.name = "-f",
+         .description = "Path to file with initial filed state",
+         .isMandatory = false,
+         .hasArgValue = true},
     };
 }
 
 GameSettings buildGameSettings(const utils::ArgsParser& clArgs)
 {
-    BordersType borders = BordersType::LIMITED;
-    if (clArgs.isSpecified("-b")) {
-        borders = magic_enum::enum_cast<BordersType>(clArgs.getArgValue("-b"))
-                      .value();
-    }
-
-    RulesType rules = RulesType::BASIC;
-    if (clArgs.isSpecified("-r")) {
-        rules =
-            magic_enum::enum_cast<RulesType>(clArgs.getArgValue("-r")).value();
-    }
+    const auto getEnumFromArgs =
+        [&clArgs](std::string_view argName,
+                  auto defaultValue) -> decltype(defaultValue) {
+        using EnumT = decltype(defaultValue);
+        return clArgs.isSpecified(argName)
+                   ? magic_enum::enum_cast<EnumT>(clArgs.getArgValue(argName))
+                         .value_or(defaultValue)
+                   : defaultValue;
+    };
 
     return GameSettignsBuilder()
-        .withBordersType(borders)
-        .withRules(rules)
+        .withBordersType(getEnumFromArgs("-b", BordersType::LIMITED))
+        .withRules(getEnumFromArgs("-r", RulesType::BASIC))
         .build();
 }
 

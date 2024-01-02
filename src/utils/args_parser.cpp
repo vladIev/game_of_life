@@ -9,10 +9,27 @@ namespace utils {
 
 void ArgsParser::validate() const
 {
+    const auto validateArgValue = [this](const OptionInfo& option) {
+        const auto withArgValue = d_args.at(option.name).has_value();
+        if (option.hasArgValue && !withArgValue) {
+            return false;
+        }
+        if (!option.hasArgValue && withArgValue) {
+            return false;
+        }
+
+        return true;
+    };
+
     std::set<std::string_view> usedKeys;
     for (const auto& option : d_options) {
-        const bool isInArgs = isSpecified(option.name);
-        if (isInArgs) {
+        if (isSpecified(option.name)) {
+
+            if (!validateArgValue(option)) {
+                throw std::invalid_argument(fmt::format(
+                    "Error while parsing argvalue for option {}", option.name));
+            }
+
             usedKeys.emplace(option.name);
         }
         else if (option.isMandatory) {
@@ -81,18 +98,20 @@ ArgsParser::ArgType ArgsParser::getArgValue(std::string_view name) const
 
 std::string ArgsParser::getHelp() const
 {
-    constexpr std::string_view argumentFormat = "\t{}{}  {}\n";
-    size_t longestArgName = 0;
-    for (const auto& option : d_options) {
-        longestArgName = std::max(option.name.size(), longestArgName);
-    }
-
     std::string result;
     for (const auto& option : d_options) {
-        const size_t fillerLength = option.name.size() - longestArgName;
-        std::string filler(fillerLength, ' ');
-        result += fmt::format(
-            argumentFormat, option.name, filler, option.description);
+        if (option.isMandatory) {
+            result += fmt::format("\n\t{} {}    {}",
+                                  option.name,
+                                  option.hasArgValue ? " <value>" : "",
+                                  option.description);
+        }
+        else {
+            result += fmt::format("\n\t[{}{}]    {}",
+                                  option.name,
+                                  option.hasArgValue ? " <value>" : "",
+                                  option.description);
+        }
     }
     return result;
 }

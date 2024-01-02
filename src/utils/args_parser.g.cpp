@@ -55,7 +55,8 @@ TEST(args_parser, parse_argvalue)
     const std::vector<OptionInfo> options{
         {.name = "-t",
          .description = "Specifies some test value",
-         .isMandatory = false},
+         .isMandatory = false,
+         .hasArgValue = true},
     };
     const std::vector<char*> argv = {
         (char*)"program_name",
@@ -78,7 +79,8 @@ TEST(args_parser, parse_argvalue_and_flag)
          .isMandatory = false},
         {.name = "-t",
          .description = "Specifies some test value",
-         .isMandatory = false},
+         .isMandatory = false,
+         .hasArgValue = true},
     };
 
     const std::vector<char*> argv = {
@@ -152,15 +154,13 @@ TEST(args_parser, get_help)
          .isMandatory = false},
         {.name = "-t",
          .description = "Specifies some test value",
-         .isMandatory = false},
+         .isMandatory = false,
+         .hasArgValue = true},
     };
 
-    const std::string expected = fmt::format("\t{}  {}\n"
-                                             "\t{}  {}\n",
-                                             options[0].name,
-                                             options[0].description,
-                                             options[1].name,
-                                             options[1].description);
+    const std::string expected =
+        "\n\t[-h]    Prints application description"
+        "\n\t[-t <value>]    Specifies some test value";
 
     const std::vector<char*> argv = {
         (char*)"program_name",

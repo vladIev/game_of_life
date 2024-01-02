@@ -14,6 +14,7 @@ struct OptionInfo {
     const std::string name;
     const std::string description;
     const bool isMandatory = false;
+    const bool hasArgValue = false;
 };
 
 class ArgsParser {
