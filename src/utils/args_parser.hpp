@@ -11,11 +11,9 @@
 namespace utils {
 
 struct OptionInfo {
-    enum class ValueType { e_STRING, e_INT };
-
     const std::string name;
     const std::string description;
-    const bool isMandatory;
+    const bool isMandatory = false;
 };
 
 class ArgsParser {

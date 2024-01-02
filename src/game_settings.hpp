@@ -1,30 +1,32 @@
 #ifndef GAME_SETTINGS_HPP
 #define GAME_SETTINGS_HPP
+
+#include <cctype>
 #include <utility>
 
 namespace life {
+
 class GameSettignsBuilder;
+enum BordersType {
+    LIMITED,
+};
+enum RulesType {
+    BASIC,
+};
+
 class GameSettings {
-  public:
-    enum class RulesType {
-        e_BASIC,
-    };
-
-    enum class BordersType { e_LIMITED };
-
   private:
-    RulesType d_rules = RulesType::e_BASIC;
-    BordersType d_bordersType = BordersType::e_LIMITED;
+    RulesType d_rules = RulesType::BASIC;
+    BordersType d_bordersType = BordersType::LIMITED;
 
+    GameSettings() = default;
     friend GameSettignsBuilder;
 
   public:
-    GameSettings() = delete;
     GameSettings(GameSettings&&) = default;
     GameSettings& operator=(GameSettings&&) = default;
-
-    GameSettings(const GameSettings&) = delete;
-    GameSettings& operator=(const GameSettings&) = delete;
+    GameSettings(const GameSettings&) = default;
+    GameSettings& operator=(const GameSettings&) = default;
 
     [[nodiscard]] auto getRulesType() const -> RulesType { return d_rules; }
 
@@ -39,14 +41,13 @@ class GameSettignsBuilder {
     GameSettings d_settings;
 
   public:
-    auto withRules(GameSettings::RulesType rules) && -> GameSettignsBuilder&&
+    auto withRules(RulesType rules) && -> GameSettignsBuilder&&
     {
         d_settings.d_rules = rules;
         return static_cast<GameSettignsBuilder&&>(*this);
     }
 
-    auto withBordersType(
-        GameSettings::BordersType borders) && -> GameSettignsBuilder&&
+    auto withBordersType(BordersType borders) && -> GameSettignsBuilder&&
     {
         d_settings.d_bordersType = borders;
         return static_cast<GameSettignsBuilder&&>(*this);
