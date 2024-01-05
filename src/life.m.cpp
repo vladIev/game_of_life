@@ -1,4 +1,5 @@
 // #include "game_engine.hpp"
+#include "game_engine.hpp"
 #include "game_settings.hpp"
 #include "utils/args_parser.hpp"
 
@@ -66,10 +67,34 @@ auto main(int argc, char** argv) -> int
         return 0;
     }
 
-    const auto settings = buildGameSettings(clArgs);
+    auto settings = buildGameSettings(clArgs);
     spdlog::info("Creating game with {} rules and {} borders",
                  magic_enum::enum_name(settings.getRulesType()),
                  magic_enum::enum_name(settings.getBordersType()));
 
+    GameEngine engine(std::move(settings));
+    const auto& fieldsFactory = engine.getFieldsFactory();
+    const auto& fieldsTypes = fieldsFactory.getTemplateFieldsType();
+    UI ui;
+    const auto selectedType = ui.selectFildType(fieldsTypes);
+    if (selectedType == FieldsTypes::Custom) {
+        const auto path = ui.getPathToField();
+        auto field = fieldsFactory.build(path);
+        engine.start(std::move(field));
+    }
+    else {
+        auto field = fieldsFactory.build(selectedType);
+        engine.start(std::move(field));
+    }
+
+    ui.initCommandsHandler(...);
+    while (!isStopped()) {
+        auto field = engine.getNextGeneration();
+        ui.draw(field);
+        // rate limiter.wait()
+    }
+
+    engine.stop();
+    ui.stop();
     return 0;
 }

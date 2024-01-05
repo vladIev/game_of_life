@@ -1,19 +1,18 @@
 #ifndef GAME_ENGINE_HPP
 #define GAME_ENGINE_HPP
 #include "game_settings.hpp"
+#include "rules_engine.hpp"
 
 namespace life {
-template <typename RulesEngine>
 class GameEngine {
-    using FieldType = typename RulesEngine::FieldType;
     RulesEngine d_rulesEngine;
     GameSettings d_settings;
 
   public:
-    GameEngine(GameSettings settings);
+    GameEngine(GameSettings settings, RulesEngine&& engine);
     void start();
     void stop();
-    FieldType getNextState();
+    FieldType getNextGeneration(FieldType field);
 };
 } // namespace life
 
