@@ -91,7 +91,6 @@ auto main(int argc, char** argv) -> int
     while (!isStopped()) {
         auto field = engine.getNextGeneration();
         ui.draw(field);
-        // rate limiter.wait()
     }
 
     engine.stop();
