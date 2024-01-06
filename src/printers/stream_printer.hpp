@@ -6,24 +6,23 @@
 
 namespace life {
 struct FieldType {
-    std::array<std::array<uint8_t, 80>, 24> d_data;
+    std::array<uint8_t, 80 * 24> d_data;
     int width() const { return 80; }
 
     int height() const { return 24; }
 
-    std::span<uint8_t> data() const
-    {
-        return std::span<uint8_t>(d_data.data(), widht() * height);
-    }
+    auto data() const { return std::span(d_data.begin(), d_data.end()); }
 };
 class StreamPrinter {
-    std::ostream d_stream;
+    std::ostream* d_stream;
+    std::string fieldToString(FieldType field) const;
 
   public:
-    StreamPrinter(std::ostream stream) : d_stream(std::move(stream)) {}
+    StreamPrinter(std::ostream* stream) : d_stream(stream) {}
     void printOptions(std::string_view intro,
-                      std::span<std::string_view> options);
-    void printField(FieldType filed);
+                      std::span<const std::string_view> options);
+    void printField(const FieldType& filed);
 };
+
 } // namespace life
 #endif

@@ -1,40 +1,47 @@
 #include "stream_printer.hpp"
-#include <fmt/format.h>
+
+#include <iterator>
+#include <ranges>
+
+namespace life {
 
 void StreamPrinter::printOptions(std::string_view intro,
-                                 std::span<std::string_view> options)
+                                 std::span<const std::string_view> options)
 {
     if (options.empty()) {
-        return 0;
+        return;
     }
-    std::string output = fmt::format("{}:\n", intro);
-    size_t cntr = 0;
+    (*d_stream) << intro << ":\n";
+    size_t cntr = 1;
     for (const auto& option : options) {
-        output += fmt::format("{} - {}", cntr, options);
+        (*d_stream) << cntr << " - " << option << "\n";
         cntr++;
     }
-    std::cout << options << std::endl;
 }
-
-std::string StreamPrinter::fieldToString(FieldType filed)
+std::string StreamPrinter::fieldToString(FieldType field) const
 {
-    const auto data = filed.data();
+    const auto data = field.data();
     const auto fieldSize = field.height() * (field.width() + 1);
     const char deadCell = ' ';
-    const char aliveCell = '•';
+    const char aliveCell = 'o';
     const int offset = aliveCell - deadCell;
     std::string strField;
     strField.reserve(fieldSize);
-    std::ranges::for_each(
-        data | std::views::transform(
-                   [deadCell, offset](int cell) -> unsigned char {
-                       return deadCell + offset * cell;
-                   }),
-        std::begin(strField));
+    std::ranges::copy(std::views::transform(
+                          data,
+                          [deadCell, offset](uint8_t cell) -> unsigned char {
+                              return deadCell + offset * cell;
+                          }),
+                      std::back_inserter(strField));
     return strField;
 }
 
-void StreamPrinter::printField(FieldType filed, int startFromL ine)
+void StreamPrinter::printField(const FieldType& field)
 {
-    std::cout << fieldToString(field);
+    const auto str = fieldToString(field);
+    for (const auto i : std::views::iota(0, field.height())) {
+        (*d_stream) << std::string_view(&str[i * field.width()], field.width())
+                    << "\n";
+    }
 }
+} // namespace life
