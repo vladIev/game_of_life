@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_PREFIX_PATH build)
 
 add_compile_options("-std=c++20")
-add_compile_options("-fconcepts-diagnostics-depth=2")
 
 include(CTest)
 include("${CMAKE_SOURCE_DIR}/cmake/cmake_utils.cmake")
