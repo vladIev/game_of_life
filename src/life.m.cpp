@@ -75,6 +75,7 @@ auto main(int argc, char** argv) -> int
     GameEngine engine(std::move(settings));
     const auto& fieldsFactory = engine.getFieldsFactory();
     const auto& fieldsTypes = fieldsFactory.getTemplateFieldsType();
+
     UI ui;
     const auto selectedType = ui.selectFildType(fieldsTypes);
     if (selectedType == FieldsTypes::Custom) {
