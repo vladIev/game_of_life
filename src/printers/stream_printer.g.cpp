@@ -5,10 +5,10 @@
 #include <gtest/gtest.h>
 
 using namespace life;
-std::pair<FieldType, std::string> getDummyField()
+std::pair<Field, std::string> getDummyField()
 {
     constexpr std::array<unsigned char, 2> cells{' ', 'o'};
-    FieldType field;
+    Field field;
     std::stringstream expected;
     for (auto i : std::views::iota(0, field.height())) {
         for (auto j : std::views::iota(0, field.width())) {

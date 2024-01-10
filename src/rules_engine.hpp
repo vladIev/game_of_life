@@ -6,7 +6,7 @@
 namespace life {
 class FieldType;
 struct FieldFactory {
-    FieldType build(size_t width, size_t height);
+    FieldType build(size_t width, size_t height) {}
     FieldType build(const std::filesystem::path& path);
     FieldType build(const FieldType& field);
 };
