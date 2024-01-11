@@ -9,7 +9,7 @@ class UI {
     using HotkeyHandler = std::function<int()>;
     using HotkeysMap = std::unordered_map<KeyCode, HotkeyHandler>;
 
-    auto selectFieldType(auto avaliableType);
+    auto selectFieldTemplate(auto avaliableType);
     void initHotkeys(HotkeysMap hotkeysHandlers);
     void draw(const FiledType& field);
 };

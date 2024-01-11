@@ -1,5 +1,6 @@
 #ifndef GAME_ENGINE_HPP
 #define GAME_ENGINE_HPP
+#include "fields/filed.hpp"
 #include "game_settings.hpp"
 #include "rules_engine.hpp"
 
@@ -14,7 +15,7 @@ class GameEngine {
     GameEngine(GameSettings settings);
     void start();
     void stop();
-    FieldType getNextGeneration(FieldType field);
+    Field getNextGeneration(Field field);
 };
 } // namespace life
 

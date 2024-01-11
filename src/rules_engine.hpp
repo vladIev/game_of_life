@@ -1,21 +1,23 @@
 #ifndef RULES_ENGINE_HPP
 #define RULES_ENGINE_HPP
+#include "fields/filed.hpp"
+
 #include <filesystem>
 #include <ranges>
 
 namespace life {
-class FieldType;
+class Field;
 struct FieldFactory {
-    FieldType build(size_t width, size_t height) {}
-    FieldType build(const std::filesystem::path& path);
-    FieldType build(const FieldType& field);
+    Field build(size_t width, size_t height) {}
+    Field build(const std::filesystem::path& path);
+    Field build(const Field& field);
 };
 
 class CellCalculator {
-    const FieldType* d_field;
+    const Field* d_field;
 
   public:
-    CellCalculator(const FieldType* field);
+    CellCalculator(const Field* field);
     uint8_t operator()(size_t x, size_t y) const;
 };
 
@@ -25,10 +27,10 @@ class BasicRulesEngine {
   public:
     BasicRulesEngine();
     const FieldFactory& fieldsFactory();
-    FieldType getNextGeneration(const FieldType& field)
+    Field getNextGeneration(const Field& field)
     {
         CellCalculator calculator(&field);
-        FieldType newField = d_factory.build(field);
+        Field newField = d_factory.build(field);
         for (size_t i = 1; i < field.height(); i++) {
             for (size_t j 0; j < field.width(); j++) {
                 newField.at(i, j) = calculator(i, j);

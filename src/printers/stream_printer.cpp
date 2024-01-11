@@ -18,7 +18,7 @@ void StreamPrinter::printOptions(std::string_view intro,
         cntr++;
     }
 }
-std::string StreamPrinter::fieldToString(FieldType field) const
+std::string StreamPrinter::fieldToString(Field field) const
 {
     const auto data = field.data();
     const auto fieldSize = field.height() * (field.width() + 1);
@@ -36,10 +36,10 @@ std::string StreamPrinter::fieldToString(FieldType field) const
     return strField;
 }
 
-void StreamPrinter::printField(const FieldType& field)
+void StreamPrinter::printField(const Field& field)
 {
     const auto str = fieldToString(field);
-    for (const auto i : std::views::iota(0, field.height())) {
+    for (const auto i : std::views::iota(0u, field.height())) {
         (*d_stream) << std::string_view(&str[i * field.width()], field.width())
                     << "\n";
     }

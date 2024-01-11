@@ -21,5 +21,6 @@ include_directories(${fmt_INCLUDE_DIRS})
 include_directories(${spdlog_INCLUDE_DIR})
 include_directories(${GTest_INCLUDE_DIRS})
 include_directories(${magic_enum_INCLUDE_DIR})
+include_directories(src)
 
 add_subdirectory(src)
