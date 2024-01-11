@@ -8,12 +8,12 @@ using namespace life;
 std::pair<Field, std::string> getDummyField()
 {
     constexpr std::array<unsigned char, 2> cells{' ', 'o'};
-    Field field;
+    Field field(80, 24);
     std::stringstream expected;
-    for (auto i : std::views::iota(0, field.height())) {
-        for (auto j : std::views::iota(0, field.width())) {
+    for (const auto i : std::views::iota(0u, field.height())) {
+        for (const auto j : std::views::iota(0u, field.width())) {
             uint8_t val = (i + j) % 2;
-            field.d_data[i * field.width() + j] = val;
+            field.at(i, j) = val;
             expected << cells[val];
         }
         expected << "\n";
