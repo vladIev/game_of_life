@@ -8,9 +8,14 @@
 namespace life {
 class Field;
 struct FieldFactory {
-    Field build(size_t width, size_t height) {}
-    Field build(const std::filesystem::path& path);
-    Field build(const Field& field);
+    Field build(size_t width, size_t height) { return Field(width, height); }
+    Field build(const std::filesystem::path& path) { return Field(1, 1); }
+    Field build(size_t width, size_t height, const Field& in)
+    {
+        Field field(std::max(width, in.width()), std::max(height, in.height()));
+        // embed(field, in);
+        return field;
+    }
 };
 
 class CellCalculator {
