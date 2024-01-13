@@ -1,5 +1,6 @@
 #ifndef FIELD_HPP
 #define FIELD_HPP
+#include <ranges>
 #include <span>
 #include <vector>
 
@@ -18,16 +19,22 @@ class Field {
           d_data(std::next(d_dataBlob.begin(), 1 + width), width * height)
     {
     }
+
+    Field(size_t width, size_t height, std::span<const uint8_t> data)
+        : d_width(width), d_height(height),
+          d_dataBlob((width + 2) * (height + 2)),
+          d_data(std::next(d_dataBlob.begin(), 1 + width), width * height)
+    {
+        std::ranges::copy(data, std::next(d_dataBlob.begin(), 1 + width));
+    }
+
     inline auto width() const { return d_width; }
 
     inline auto height() const { return d_height; }
 
     inline auto data() const { return d_data; }
 
-    inline CellType& at(size_t y, size_t x) const
-    {
-        return d_data[y * d_width + x];
-    }
+    inline CellType& at(int y, int x) const { return d_data[y * d_width + x]; }
 };
 } // namespace life
 

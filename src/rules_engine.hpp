@@ -10,6 +10,10 @@ class Field;
 struct FieldFactory {
     Field build(size_t width, size_t height) { return Field(width, height); }
     Field build(const std::filesystem::path& path) { return Field(1, 1); }
+    Field build(const Field& field)
+    {
+        return Field(field.width(), field.height());
+    }
     Field build(size_t width, size_t height, const Field& in)
     {
         Field field(std::max(width, in.width()), std::max(height, in.height()));
@@ -30,14 +34,14 @@ class BasicRulesEngine {
     FieldFactory d_factory;
 
   public:
-    BasicRulesEngine();
-    const FieldFactory& fieldsFactory();
+    BasicRulesEngine() {}
+    const FieldFactory& fieldsFactory() const { return d_factory; }
     Field getNextGeneration(const Field& field)
     {
         CellCalculator calculator(&field);
         Field newField = d_factory.build(field);
         for (size_t i = 1; i < field.height(); i++) {
-            for (size_t j 0; j < field.width(); j++) {
+            for (size_t j = 0; j < field.width(); j++) {
                 newField.at(i, j) = calculator(i, j);
             }
         }
