@@ -1,6 +1,6 @@
 #ifndef STREAM_PRINTER_HPP
 #define STREAM_PRINTER_HPP
-#include "fields/filed.hpp"
+#include "fields/field.hpp"
 
 #include <ostream>
 #include <span>
