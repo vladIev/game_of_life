@@ -12,9 +12,7 @@ TEST(field, constructor)
     EXPECT_EQ(f.width(), width);
     EXPECT_EQ(f.height(), height);
 
-    for (const auto& rows : f.data()) {
-        for (const auto& cell : rows) {
-            ASSERT_EQ(cell, 0);
-        }
+    for (const auto& cell : f.data()) {
+        ASSERT_EQ(cell, 0);
     }
 }
