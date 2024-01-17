@@ -40,7 +40,7 @@ class BasicRulesEngine {
     {
         CellCalculator calculator(&field);
         Field newField = d_factory.build(field);
-        for (size_t i = 1; i < field.height(); i++) {
+        for (size_t i = 0; i < field.height(); i++) {
             for (size_t j = 0; j < field.width(); j++) {
                 newField.at(i, j) = calculator(i, j);
             }
