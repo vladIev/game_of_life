@@ -7,18 +7,33 @@
 
 namespace life {
 class Field;
-struct FieldFactory {
-    Field build(size_t width, size_t height) { return Field(width, height); }
-    Field build(const std::filesystem::path& path) { return Field(1, 1); }
-    Field build(const Field& field)
-    {
-        return Field(field.width(), field.height());
-    }
+class FieldFactory {
+  private:
+    void randomize(Field* field);
+
+  public:
+    enum class Tempalte { RANDOM };
+    Field build(size_t width, size_t height) { return {width, height}; }
+    Field build(const std::filesystem::path& path) { return {1, 1}; }
+    Field build(const Field& field) { return {field.width(), field.height()}; }
     Field build(size_t width, size_t height, const Field& in)
     {
         Field field(std::max(width, in.width()), std::max(height, in.height()));
         // embed(field, in);
         return field;
+    }
+
+    Field build(Tempalte type, size_t width, size_t height)
+    {
+        switch (type) {
+        case Tempalte::RANDOM: {
+            auto field = build(width, height);
+            randomize(&field);
+            return field;
+        }
+        default:
+            throw(std::runtime_error("Unknown template"));
+        }
     }
 };
 
@@ -35,7 +50,10 @@ class BasicRulesEngine {
 
   public:
     BasicRulesEngine() {}
-    const FieldFactory& fieldsFactory() const { return d_factory; }
+    [[nodiscard]] const FieldFactory& fieldsFactory() const
+    {
+        return d_factory;
+    }
     Field getNextGeneration(const Field& field)
     {
         CellCalculator calculator(&field);

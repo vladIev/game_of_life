@@ -1,5 +1,6 @@
 #include "stream_printer.hpp"
 
+#include <algorithm>
 #include <iterator>
 #include <ranges>
 

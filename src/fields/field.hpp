@@ -1,5 +1,6 @@
 #ifndef FIELD_HPP
 #define FIELD_HPP
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <ranges>
@@ -24,7 +25,7 @@ class Field {
 
     {
         assert(d_height * d_width == data.size());
-        std::copy(data.begin(), data.end(), d_dataBlob.data());
+        std::ranges::copy(data.begin(), data.end(), d_dataBlob.data());
     }
 
     [[nodiscard]] inline auto width() const { return d_width; }
