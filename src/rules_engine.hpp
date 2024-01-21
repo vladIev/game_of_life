@@ -2,6 +2,8 @@
 #define RULES_ENGINE_HPP
 #include "fields/field.hpp"
 
+#include <magic_enum/magic_enum.hpp>
+
 #include <filesystem>
 #include <ranges>
 
@@ -13,6 +15,11 @@ class FieldFactory {
 
   public:
     enum class Tempalte { RANDOM };
+    std::vector<std::string> getTemplates() const
+    {
+        constexpr auto names = magic_enum::enum_names<Tempalte>();
+        return {names.begin(), names.end()};
+    }
     Field build(size_t width, size_t height) { return {width, height}; }
     Field build(const std::filesystem::path& path) { return {1, 1}; }
     Field build(const Field& field) { return {field.width(), field.height()}; }

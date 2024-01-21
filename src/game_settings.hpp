@@ -18,6 +18,8 @@ class GameSettings {
   private:
     RulesType d_rules = RulesType::BASIC;
     BordersType d_bordersType = BordersType::LIMITED;
+    size_t d_width = 80;
+    size_t d_height = 24;
 
     GameSettings() = default;
     friend GameSettignsBuilder;
@@ -34,6 +36,9 @@ class GameSettings {
     {
         return d_bordersType;
     }
+
+    [[nodiscard]] auto width() const -> size_t { return d_width; }
+    [[nodiscard]] auto height() const -> size_t { return d_height; }
 };
 
 class GameSettignsBuilder {
@@ -50,6 +55,18 @@ class GameSettignsBuilder {
     auto withBordersType(BordersType borders) && -> GameSettignsBuilder&&
     {
         d_settings.d_bordersType = borders;
+        return static_cast<GameSettignsBuilder&&>(*this);
+    }
+
+    auto withWdith(size_t width) && -> GameSettignsBuilder&&
+    {
+        d_settings.d_width = width;
+        return static_cast<GameSettignsBuilder&&>(*this);
+    }
+
+    auto withHeight(size_t height) && -> GameSettignsBuilder&&
+    {
+        d_settings.d_height = height;
         return static_cast<GameSettignsBuilder&&>(*this);
     }
 

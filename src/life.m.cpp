@@ -32,6 +32,34 @@ constexpr auto getAppArgs() -> std::vector<utils::OptionInfo>
     };
 }
 
+auto getStartingField(const UI& ui,
+                      const FieldFactory& factory,
+                      const GameSettings& settings) -> std::optional<Field>
+{
+    const auto selectedType = ui.select();
+    switch (selectedType) {
+    case FieldsTypes::Custom: {
+        const auto path = ui.getPathToField();
+        return factory.build(path);
+    }
+    case FieldsTypes::Template: {
+        int choice = ui.select(factory.getTemplates());
+        return factory.build(
+            magic_enum::enum_cast<FieldFactory::Tempalte>(choice),
+            settings.width(),
+            settings.height());
+    }
+    case FieldsTypes::Random: {
+        return factory.build(settings.width(), settings.height());
+    }
+    case FieldsTypes::Empty: {
+        return Field(settings.width(), settings.height());
+    }
+    }
+
+    return std::nullopt;
+}
+
 GameSettings buildGameSettings(const utils::ArgsParser& clArgs)
 {
     const auto getEnumFromArgs =
@@ -72,21 +100,16 @@ auto main(int argc, char** argv) -> int
                  magic_enum::enum_name(settings.getRulesType()),
                  magic_enum::enum_name(settings.getBordersType()));
 
-    GameEngine engine(std::move(settings));
+    GameEngine engine(settings);
     const auto& fieldsFactory = engine.getFieldsFactory();
-    const auto& fieldsTypes = fieldsFactory.getTemplateFieldsType();
 
     UI ui;
-    const auto selectedType = ui.selectFildType(fieldsTypes);
-    if (selectedType == FieldsTypes::Custom) {
-        const auto path = ui.getPathToField();
-        auto field = fieldsFactory.build(path);
-        engine.start(std::move(field));
+
+    const auto inititalField = getStartingField(ui, fieldsFactory, settings);
+    if (!inititalField) {
+        return 0;
     }
-    else {
-        auto field = fieldsFactory.build(selectedType);
-        engine.start(std::move(field));
-    }
+    engine.start(*inititalField);
 
     ui.initCommandsHandler(...);
     while (!isStopped()) {
