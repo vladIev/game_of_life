@@ -36,23 +36,25 @@ auto getStartingField(const UI& ui,
                       const FieldFactory& factory,
                       const GameSettings& settings) -> std::optional<Field>
 {
-    const auto selectedType = ui.select();
+    enum class FieldInitialization { CUSTOM, TEMPLATE, EMPTY, RANDOM };
+    const auto selectedType = ui.select<FieldInitialization>(
+        magic_enum::enum_names<FieldInitialization>());
     switch (selectedType) {
-    case FieldsTypes::Custom: {
+    case FieldInitialization::CUSTOM: {
         const auto path = ui.getPathToField();
         return factory.build(path);
     }
-    case FieldsTypes::Template: {
+    case FieldInitialization::TEMPLATE: {
         int choice = ui.select(factory.getTemplates());
         return factory.build(
             magic_enum::enum_cast<FieldFactory::Tempalte>(choice),
             settings.width(),
             settings.height());
     }
-    case FieldsTypes::Random: {
+    case FieldInitialization::RANDOM: {
         return factory.build(settings.width(), settings.height());
     }
-    case FieldsTypes::Empty: {
+    case FieldInitialization::EMPTY: {
         return Field(settings.width(), settings.height());
     }
     }
