@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <magic_enum/magic_enum.hpp>
 
+#include <optional>
 #include <stdexcept>
 #include <vector>
 
@@ -45,11 +46,9 @@ auto getStartingField(const UI& ui,
         return factory.build(path);
     }
     case FieldInitialization::TEMPLATE: {
-        int choice = ui.select(factory.getTemplates());
-        return factory.build(
-            magic_enum::enum_cast<FieldFactory::Tempalte>(choice),
-            settings.width(),
-            settings.height());
+        const auto choice =
+            ui.select<FieldFactory::Tempalte>(factory.getTemplates());
+        return factory.build(choice, settings.width(), settings.height());
     }
     case FieldInitialization::RANDOM: {
         return factory.build(settings.width(), settings.height());
@@ -110,10 +109,11 @@ auto main(int argc, char** argv) -> int
     const auto inititalField = getStartingField(ui, fieldsFactory, settings);
     if (!inititalField) {
         return 0;
+        §
     }
     engine.start(*inititalField);
 
-    ui.initCommandsHandler(...);
+    ui.initCommandsHandler({{'q', &stop}});
     while (!isStopped()) {
         auto field = engine.getNextGeneration();
         ui.draw(field);
