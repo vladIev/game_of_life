@@ -1,6 +1,7 @@
 // #include "game_engine.hpp"
 #include "game_engine.hpp"
 #include "game_settings.hpp"
+#include "ui.hpp"
 #include "utils/args_parser.hpp"
 
 #include <fmt/format.h>
@@ -109,17 +110,15 @@ auto main(int argc, char** argv) -> int
     const auto inititalField = getStartingField(ui, fieldsFactory, settings);
     if (!inititalField) {
         return 0;
-        §
     }
     engine.start(*inititalField);
 
-    ui.initCommandsHandler({{'q', &stop}});
-    while (!isStopped()) {
+    ui.initCommandsHandler({{'q', [&engine]() { engine.stop(); }}});
+    while (!engine.isStopped()) {
         auto field = engine.getNextGeneration();
         ui.draw(field);
     }
 
-    engine.stop();
     ui.stop();
     return 0;
 }

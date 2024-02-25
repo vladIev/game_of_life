@@ -1,10 +1,16 @@
 #ifndef UI_HPP
 #define UI_HPP
 
+#include "fields/field.hpp"
+
 #include <atomic>
 #include <cstdio>
+#include <functional>
+#include <iostream>
+#include <span>
 #include <thread>
 #include <unordered_map>
+#include <utility>
 
 namespace life {
 template <typename RenderType>
@@ -22,7 +28,7 @@ class UI {
   public:
     ~UI();
     void initHotkeys(HotkeysMap&& hotkeysHandlers);
-    void draw(const FiledType& field);
+    void draw(const Field& field);
     template <typename T>
     T select(std::string_view inrto, std::span<const std::string> options);
 };
@@ -31,16 +37,17 @@ template <typename T>
 UI<T>::~UI()
 {
     d_stopped = true;
-    d_hotkeyThread.join();
+    d_hotkeysThread.join();
 }
 
 template <typename T>
 void UI<T>::initHotkeys(HotkeysMap&& hotkeysHandlers)
 {
     constexpr int ESC_KEY = 27;
-    d_hotkeys = std::forward(hotkeysHandlers);
+    d_hotkeys = std::forward<HotkeysMap>(hotkeysHandlers);
     d_hotkeysThread = std::thread([this]() {
-        while (int key = std::getchar(); key != ESC_KEY && !d_stopped) {
+        while (!d_stopped) {
+            int key = std::getchar();
             if (!d_hotkeys.contains(key)) {
                 continue;
             }
@@ -50,19 +57,19 @@ void UI<T>::initHotkeys(HotkeysMap&& hotkeysHandlers)
 }
 
 template <typename T>
-void UI<T>::draw(const FiledType& field)
+void UI<T>::draw(const Field& field)
 {
     d_render.draw(field);
 }
 
 template <typename Render>
 template <typename T>
-T UI<Render>::select(std::string_view inrto,
+T UI<Render>::select(std::string_view intro,
                      std::span<const std::string> options)
 {
     d_render.printOptions(intro, options);
     int choice = -1;
-    while (1) {
+    while (true) {
         std::cin >> choice;
         if (choice >= 0 && choice < options.size()) {
             break;
